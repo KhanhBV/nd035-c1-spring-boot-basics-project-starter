@@ -3,10 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
-import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
-import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
-import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
-import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,17 +18,21 @@ public class HomeController {
     private final CredentialService credentialService;
     private final FileService fileService;
 
-    public HomeController(UserService userService, NoteService noteService, CredentialService credentialService, FileService fileService) {
+    private final EncryptionService encryptionService;
+
+    public HomeController(UserService userService, NoteService noteService, CredentialService credentialService, FileService fileService, EncryptionService encryptionService) {
         this.userService = userService;
         this.noteService = noteService;
         this.credentialService = credentialService;
         this.fileService = fileService;
+        this.encryptionService = encryptionService;
     }
 
     @GetMapping
     public String showHomePage(Model model, Authentication authentication) {
         User user = userService.getUser(authentication.getName());
         Integer userId = user.getUserId();
+        model.addAttribute("encryptionService",encryptionService);
 
         model.addAttribute("newNote", new Note());
         model.addAttribute("newCredential", new Credential());

@@ -35,10 +35,14 @@ public class FileService {
     }
 
     public int uploadFile(File file, MultipartFile multipartFile) throws IOException {
-        file.setFileName(multipartFile.getOriginalFilename());
-        file.setContentType(multipartFile.getContentType());
-        file.setFileSize(String.valueOf(multipartFile.getSize()));
-        file.setFileData(multipartFile.getBytes());
+        try {
+            file.setFileName(multipartFile.getOriginalFilename());
+            file.setContentType(multipartFile.getContentType());
+            file.setFileSize(String.valueOf(multipartFile.getSize()));
+            file.setFileData(multipartFile.getBytes());
+        } catch (IOException e) {
+            throw e;
+        }
 
         return fileMapper.insertFile(file);
     }

@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.naming.SizeLimitExceededException;
 import java.io.IOException;
 
 @Controller
@@ -31,22 +33,34 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("fileUpload") MultipartFile multipartFile, File file, Authentication authentication, Model model) {
-        User user = userService.getUser(authentication.getName());
-        file.setUserId(user.getUserId());
+    public String uploadFile(@RequestParam("fileUpload") MultipartFile multipartFile, File file, Authentication authentication, Model model) throws Exception {
+        try {
+            if (multipartFile.isEmpty()) {
+                model.addAttribute("errMsg", "You must be choice file to upload!!!");
 
-        if (fileService.getFileByFileName(file.getFileName()) != null) {
-            model.addAttribute("errMsg", "Can not upload file because file name is exist!!!");
-        } else {
-            try {
-                fileService.uploadFile(file, multipartFile);
-                model.addAttribute("successMsg", "Upload file successful");
-            } catch (IOException e) {
-               e.printStackTrace();
+                return "result";
             }
-        }
 
-        return "result";
+            User user = userService.getUser(authentication.getName());
+            file.setUserId(user.getUserId());
+
+            if (fileService.getFileByFileName(multipartFile.getOriginalFilename()) != null) {
+                model.addAttribute("errMsg", "Can not upload file because file name is exist!!!");
+            } else {
+                try {
+                    fileService.uploadFile(file, multipartFile);
+                    model.addAttribute("successMsg", "Upload file successful");
+                } catch (Exception e) {
+                    model.addAttribute("errMsg", "Upload file fail because size of file more than 5MB!!");
+                    return "result";
+                }
+            }
+
+            return "result";
+        } catch (MaxUploadSizeExceededException e) {
+            model.addAttribute("errMsg", "Upload file fail because size of file more than 5MB!!");
+            return "result";
+        }
     }
 
     @RequestMapping("/delete/{fileId}")

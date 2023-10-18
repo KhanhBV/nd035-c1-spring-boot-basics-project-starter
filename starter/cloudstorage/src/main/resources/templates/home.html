@@ -153,7 +153,7 @@
                         <tr>
                             <td>
                                 <button type="button" class="btn btn-success" id="editCredentialButton"
-                                        th:onclick="showCredentialModal([[${credential.credentialId}]], [[${credential.url}]], [[${credential.username}]], [[${credential.password}]])">
+                                        th:onclick="showCredentialModal([[${credential.credentialId}]], [[${credential.url}]], [[${credential.username}]], [[${encryptionService.decryptValue(credential.password, credential.key)}]])">
                                     Edit
                                 </button>
                                 <a class="btn btn-danger" id="deleteCredentialButton"
@@ -161,7 +161,7 @@
                             </td>
                             <th scope="row" th:text="${credential.url}" id="credentialURLData">Example Credential URL</th>
                             <td th:text="${credential.username}" id="credentialUsernameData">Example Credential Username</td>
-                            <td th:text="${credential.password}" id="credentialPasswordData">Example Credential Password</td>
+                            <td th:text="${encryptionService.decryptValue(credential.password, credential.key)}" id="credentialPasswordData">Example Credential Password</td>
                         </tr>
                         </tbody>
                     </table>

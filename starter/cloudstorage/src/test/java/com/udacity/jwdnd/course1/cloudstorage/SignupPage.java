@@ -21,8 +21,6 @@ public class SignupPage {
     private WebElement inputPassword;
     @FindBy(id = "buttonSignUp")
     private WebElement buttonSignUp;
-    @FindBy(id = "linkLoginPage")
-    private WebElement linkLoginPage;
 
 
     private WebDriver driver;
@@ -41,6 +39,5 @@ public class SignupPage {
         js.executeScript("arguments[0].value='" + username + "';", this.inputUsername);
         js.executeScript("arguments[0].value='" + password + "';", this.inputPassword);
         js.executeScript("arguments[0].click();", this.buttonSignUp);
-        js.executeScript("arguments[0].click();", this.linkLoginPage);
     }
 }
